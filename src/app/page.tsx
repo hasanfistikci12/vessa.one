@@ -177,6 +177,8 @@ export default function HomePage() {
       <a href="#process">How it works</a>
       <a href="#services">Services</a>
       <a href="#results">Results</a>
+      <Link href="/partner/join">Partner Program</Link>
+      <Link href="/partner-kit">Pricing & Kit</Link>
       <a href="#talk">Contact</a>
     </div>
     <div>vessa.one · hello@vessa.one</div>
