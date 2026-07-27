@@ -1,15 +1,48 @@
-import { requirePartnerAuth } from '@/lib/auth';
-import { getCustomerById } from '@/lib/db/customers';
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import { PipelineStepper } from '@/components/PipelineStepper';
 import { NotesSection } from '@/components/NotesSection';
 
-export default async function CustomerDetailPage({ params }: { params: { id: string } }) {
-  const session = await requirePartnerAuth();
-  const customer = await getCustomerById(params.id);
+// Add generateStaticParams for static export
+export function generateStaticParams() {
+  return [{ id: '1' }, { id: '2' }, { id: '3' }];
+}
+
+export default function CustomerDetailPage({ params }: { params: { id: string } }) {
+  // Mock Data
+  const customers: Record<string, any> = {
+    '1': {
+      id: '1',
+      fullName: 'Sarah M.',
+      createdAt: new Date(Date.now() - 1000 * 60 * 60 * 24 * 30),
+      stage: 'completed',
+      interestedIn: 'hair_transplant',
+      rewardTier: 'tier_1',
+      partnerNotes: [{ text: 'Client loved the clinic.', createdAt: new Date() }]
+    },
+    '2': {
+      id: '2',
+      fullName: 'Emily R.',
+      createdAt: new Date(Date.now() - 1000 * 60 * 60 * 24 * 10),
+      stage: 'booked',
+      interestedIn: 'aesthetic_surgery',
+      rewardTier: 'tier_2',
+      partnerNotes: []
+    },
+    '3': {
+      id: '3',
+      fullName: 'Jessica T.',
+      createdAt: new Date(Date.now() - 1000 * 60 * 60 * 24 * 2),
+      stage: 'lead',
+      interestedIn: 'aesthetic_surgery',
+      rewardTier: 'pending',
+      partnerNotes: []
+    }
+  };
+
+  const customer = customers[params.id];
   
-  if (!customer || customer.partnerId !== (session as any).partnerId) {
+  if (!customer) {
     return notFound();
   }
 

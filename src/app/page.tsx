@@ -180,6 +180,7 @@ export default function HomePage() {
       <Link href="/partner/join">Partner Program</Link>
       <Link href="/partner-kit">Partner Kit</Link>
       <Link href="/partner-earnings" style={{ color: '#B99770', fontWeight: 'bold' }}>Earnings Calculator</Link>
+      <Link href="/dashboard" style={{ color: '#1E5A8A', fontWeight: 'bold' }}>Dashboard Demo</Link>
       <a href="#talk">Contact</a>
     </div>
     <div>vessa.one · hello@vessa.one</div>

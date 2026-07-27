@@ -28,7 +28,7 @@ jobs:
         run: npm install
       - name: Remove dynamic routes for static export
         run: |
-          rm -rf src/app/api src/app/admin src/app/dashboard src/app/earnings src/app/login src/app/partner/finalize src/app/r src/middleware.ts
+          rm -rf src/app/api src/app/admin src/app/earnings src/app/login src/app/partner/finalize src/app/r src/middleware.ts
       - name: Overwrite next.config.mjs for static export
         run: |
           cat << 'EOF' > next.config.mjs

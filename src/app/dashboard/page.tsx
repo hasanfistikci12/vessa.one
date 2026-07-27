@@ -1,27 +1,42 @@
-import { requirePartnerAuth } from '@/lib/auth';
-import { getPartnerById } from '@/lib/db/partners';
-import { listCustomersByPartner } from '@/lib/db/customers';
-import { getRewardConfig } from '@/lib/db/config';
-import { computeEarned, computePending } from '@/lib/business/earnings';
 import { CustomerBoard } from '@/components/CustomerBoard';
 import { QRButton } from '@/components/QRButton';
-import { notFound } from 'next/navigation';
 
-export default async function DashboardPage() {
-  const session = await requirePartnerAuth();
-  const partnerId = (session as any).partnerId;
-  
-  const [partner, customers, config] = await Promise.all([
-    getPartnerById(partnerId),
-    listCustomersByPartner(partnerId),
-    getRewardConfig()
-  ]);
+export default function DashboardPage() {
+  // Mock Data
+  const partner = {
+    referralCode: 'GLOW2024',
+    businessName: 'Glow & Beauty'
+  };
 
-  if (!partner) return notFound();
+  const customers: any[] = [
+    {
+      id: '1',
+      name: 'Sarah M.',
+      createdAt: new Date(Date.now() - 1000 * 60 * 60 * 24 * 30), // 30 days ago
+      stage: 'completed',
+      procedure: 'Hair Transplant',
+      notes: 'Completed successfully.'
+    },
+    {
+      id: '2',
+      name: 'Emily R.',
+      createdAt: new Date(Date.now() - 1000 * 60 * 60 * 24 * 10), // 10 days ago
+      stage: 'booked',
+      procedure: 'Aesthetic Surgery',
+      dateBooked: new Date(Date.now() + 1000 * 60 * 60 * 24 * 5)
+    },
+    {
+      id: '3',
+      name: 'Jessica T.',
+      createdAt: new Date(Date.now() - 1000 * 60 * 60 * 24 * 2), // 2 days ago
+      stage: 'lead',
+      notes: 'Interested in BBL'
+    }
+  ];
 
-  const totalEarned = computeEarned(customers);
-  const pendingReward = computePending(customers, config);
-  const activeCustomers = customers.filter(c => c.stage !== 'completed' && c.stage !== 'lead').length;
+  const totalEarned = 200; // Mock earned (1 completed Hair Transplant)
+  const pendingReward = 400; // Mock pending (1 booked surgery)
+  const activeCustomers = 1; // 1 booked
 
   return (
     <div className="h-full flex flex-col">

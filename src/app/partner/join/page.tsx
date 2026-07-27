@@ -24,7 +24,9 @@ export default function JoinWizard() {
   const handleFinish = async () => {
     setIsSigningIn(true);
     localStorage.setItem('vessa_onboarding', JSON.stringify(data));
-    await signIn('google', { callbackUrl: '/partner/finalize' });
+    // Simulate API delay for demo
+    await new Promise(r => setTimeout(r, 1000));
+    router.push('/dashboard');
   };
 
   return (
