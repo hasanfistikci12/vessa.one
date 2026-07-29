@@ -9,27 +9,22 @@ import { listAllCustomers } from '@/lib/db/customers';
 export default async function DashboardPage() {
   const session = await getServerSession(authOptions);
   
-  // Actually, for demo purposes let's just fetch all customers for mock-partner-2 
-  // or use the current logged-in user if available.
   let customers: Customer[] = [];
   
-  if (session?.user?.email) {
-    const partner = await getPartnerByGoogleId(session.user.id || session.user.email);
-    if (partner) {
-      if (partner.isAdmin) {
-        customers = await listAllCustomers();
-      } else {
-        const { listCustomersByPartner } = await import('@/lib/db/customers');
-        customers = await listCustomersByPartner(partner.id);
-      }
+  if (session) {
+    const isAdmin = (session as any).isAdmin;
+    const partnerId = (session as any).partnerId;
+
+    if (isAdmin) {
+      customers = await listAllCustomers();
+    } else if (partnerId && partnerId !== 'admin-override') {
+      const { listCustomersByPartner } = await import('@/lib/db/customers');
+      customers = await listCustomersByPartner(partnerId);
     } else {
-      // Demo fallback: mock-partner-2's customers
+      // Demo fallback
       const { listCustomersByPartner } = await import('@/lib/db/customers');
       customers = await listCustomersByPartner('mock-partner-2');
     }
-  } else {
-    const { listCustomersByPartner } = await import('@/lib/db/customers');
-    customers = await listCustomersByPartner('mock-partner-2');
   }
 
   return <DashboardClient initialCustomers={customers} />;
