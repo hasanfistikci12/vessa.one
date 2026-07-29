@@ -41,6 +41,7 @@ export interface Customer {
   stage: CustomerStage;
   rewardTier: RewardTier | null;
   rewardAmount: number | null;
+  price?: number | null; // Procedure cost
   isPaid: boolean; // Added for payouts export tracking
   partnerNotes: PartnerNote[];
   timeline: TimelineEntry[];

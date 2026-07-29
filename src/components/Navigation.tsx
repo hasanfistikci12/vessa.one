@@ -4,13 +4,17 @@ import { usePathname } from 'next/navigation';
 import { signOut } from 'next-auth/react';
 import { VessaLogo } from './VessaLogo';
 
-export function Navigation({ partnerName }: { partnerName?: string }) {
+export function Navigation({ partnerName, isAdmin }: { partnerName?: string, isAdmin?: boolean }) {
   const pathname = usePathname();
 
   const links = [
     { href: '/dashboard', label: 'Dashboard', icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="3" width="7" height="9"></rect><rect x="14" y="3" width="7" height="5"></rect><rect x="14" y="12" width="7" height="9"></rect><rect x="3" y="16" width="7" height="5"></rect></svg> },
     { href: '/dashboard/earnings', label: 'Earnings', icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="1" x2="12" y2="23"></line><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg> },
   ];
+
+  if (isAdmin) {
+    links.push({ href: '/leader', label: 'Leader Board', icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg> });
+  }
 
   return (
     <>

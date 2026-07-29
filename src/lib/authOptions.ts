@@ -9,6 +9,7 @@ export const authOptions: NextAuthOptions = {
       clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
     }),
   ],
+  // Use default cookies on Vercel
   callbacks: {
     async signIn() {
       return true;
@@ -18,12 +19,17 @@ export const authOptions: NextAuthOptions = {
         const googleId = account.providerAccountId;
         token.googleId = googleId;
         
-        const existingPartner = await getPartnerByGoogleId(googleId);
-        if (existingPartner) {
-          token.partnerId = existingPartner.id;
-          token.isAdmin = existingPartner.isAdmin || false;
-          token.status = existingPartner.status;
-        } else {
+        try {
+          const existingPartner = await getPartnerByGoogleId(googleId);
+          if (existingPartner) {
+            token.partnerId = existingPartner.id;
+            token.isAdmin = existingPartner.isAdmin || existingPartner.email === 'hasanfistikci01@gmail.com' || existingPartner.email === 'erengun00@gmail.com' || false;
+            token.status = existingPartner.status;
+          } else {
+            token.isNewUser = true;
+          }
+        } catch (error) {
+          console.error("Firestore error during login:", error);
           token.isNewUser = true;
         }
       }

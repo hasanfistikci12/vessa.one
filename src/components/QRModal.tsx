@@ -21,7 +21,7 @@ export function QRModal({ isOpen, onClose, referralCode, businessName }: QRModal
 
   if (!mounted || !isOpen) return null;
 
-  const qrImageUrl = `/api/partner/qr?code=${referralCode}`;
+  const qrImageUrl = `https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(url)}`;
   
   const text = `Hi! Use this link to start your journey with Vessa.`;
   

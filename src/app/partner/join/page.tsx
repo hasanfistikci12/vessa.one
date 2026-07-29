@@ -23,10 +23,25 @@ export default function JoinWizard() {
 
   const handleFinish = async () => {
     setIsSigningIn(true);
-    localStorage.setItem('vessa_onboarding', JSON.stringify(data));
-    // Simulate API delay for demo
-    await new Promise(r => setTimeout(r, 1000));
-    router.push('/dashboard');
+    
+    try {
+      const res = await fetch('/api/partners/create', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+      });
+      
+      if (res.ok) {
+        // Re-authenticate to update the JWT cookie with the new partnerId
+        await signIn('google', { callbackUrl: '/dashboard' });
+      } else {
+        console.error('Failed to create partner');
+        setIsSigningIn(false);
+      }
+    } catch (error) {
+      console.error(error);
+      setIsSigningIn(false);
+    }
   };
 
   return (

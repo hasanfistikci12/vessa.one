@@ -45,6 +45,31 @@
   .d4 { animation-delay: 0.55s; }
   @media (prefers-reduced-motion: reduce) { .rise { animation: none; } }
 
+  /* Premium UI Effects */
+  .glass-panel {
+    background: rgba(255, 255, 255, 0.6);
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+    border: 1px solid rgba(255, 255, 255, 0.8);
+    box-shadow: 0 8px 32px rgba(11, 27, 43, 0.04);
+  }
+  .glass-card {
+    background: rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 255, 255, 1);
+    box-shadow: 0 4px 24px rgba(11, 27, 43, 0.03);
+    transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+  }
+  .glass-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 32px rgba(11, 27, 43, 0.08);
+    border-color: rgba(95, 168, 211, 0.3);
+  }
+  .animate-in {
+    animation: slideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  }
+
   /* Nav */
   .vessa-nav { position: sticky; top: 0; z-index: 60; background: rgba(251,252,253,0.86); backdrop-filter: blur(14px); border-bottom: 1px solid var(--line); }
   .vessa-nav-in { display: flex; align-items: center; justify-content: space-between; height: 66px; }
