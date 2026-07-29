@@ -1,23 +1,38 @@
 import { requirePartnerAuth } from '@/lib/auth';
 import { getPartnerById } from '@/lib/db/partners';
 import { listCustomersByPartner } from '@/lib/db/customers';
+import { MOCK_PARTNERS } from '@/lib/db/partners';
 import { notFound, redirect } from 'next/navigation';
 import Link from 'next/link';
 
 export default async function LeaderPartnerDetail({ params }: { params: { id: string } }) {
   const session = await requirePartnerAuth();
-  const leader = await getPartnerById((session as any).partnerId);
-  if (!leader?.isAdmin) redirect('/dashboard');
+  const email = session.user?.email || '';
+  const authorizedEmails = ['hasanfistikci01@gmail.com', 'erengun00@gmail.com'];
 
-  const partner = await getPartnerById(params.id);
-  if (!partner) notFound();
+  // Only allow super admins
+  if (!authorizedEmails.includes(email)) {
+    redirect('/dashboard');
+  }
 
-  const customers = await listCustomersByPartner(partner.id);
+  let partner: any = null;
+  let customers: any[] = [];
+
+  try {
+    partner = await getPartnerById(params.id);
+    if (!partner) notFound();
+    customers = await listCustomersByPartner(partner.id);
+  } catch (error) {
+    console.error('Failed to fetch partner detail data:', error);
+    // If we got partner but failed on customers, continue
+    if (!partner) notFound();
+  }
+
   const activeCustomers = customers.filter(c => c.stage !== 'lead' && c.stage !== 'completed');
   const completedCustomers = customers.filter(c => c.stage === 'completed');
   const totalEarned = completedCustomers.reduce((sum, c) => sum + (c.rewardAmount || 0), 0);
 
-  const formattedStatus = partner.status.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase());
+  const formattedStatus = partner.status.replace('_', ' ').replace(/\b\w/g, (l: string) => l.toUpperCase());
 
   return (
     <main className="flex-1 overflow-y-auto bg-[#F8FAFC]">
@@ -28,7 +43,7 @@ export default async function LeaderPartnerDetail({ params }: { params: { id: st
           Back
         </Link>
         <span className="font-serif text-deep font-semibold truncate max-w-[200px]">{partner.businessName}</span>
-        <div className="w-16"></div> {/* spacer for centering */}
+        <div className="w-16"></div>
       </div>
 
       <div className="p-4 md:p-8 max-w-4xl mx-auto space-y-6">

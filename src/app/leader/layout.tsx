@@ -17,6 +17,7 @@ export default async function LeaderLayout({ children }: { children: ReactNode }
 
   // Attempt to get partner if it exists, otherwise just use the email/name from session
   let adminName = session.user?.name || email;
+  const adminImage = session.user?.image;
   const partnerId = (session as any).partnerId;
   
   try {
@@ -30,7 +31,7 @@ export default async function LeaderLayout({ children }: { children: ReactNode }
 
   return (
     <div className="min-h-[100dvh] bg-[#F8FAFC] flex flex-col md:flex-row">
-      <LeaderNavigation adminName={adminName} />
+      <LeaderNavigation adminName={adminName} adminImage={adminImage} />
       <div className="flex-1 md:ml-64 flex flex-col h-[calc(100dvh-60px)] md:h-[100dvh] pb-[60px] md:pb-0">
         {children}
       </div>

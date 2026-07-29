@@ -1,10 +1,30 @@
 'use client';
+import { useState, useRef, useEffect } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import { signOut } from 'next-auth/react';
 import { VessaLogo } from './VessaLogo';
 
-export function LeaderNavigation({ adminName }: { adminName?: string }) {
+export function LeaderNavigation({ adminName, adminImage }: { adminName?: string, adminImage?: string | null }) {
+  const pathname = usePathname();
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isDesktopMenuOpen, setIsDesktopMenuOpen] = useState(false);
+  const mobileRef = useRef<HTMLDivElement>(null);
+  const desktopRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (mobileRef.current && !mobileRef.current.contains(event.target as Node)) {
+        setIsMobileMenuOpen(false);
+      }
+      if (desktopRef.current && !desktopRef.current.contains(event.target as Node)) {
+        setIsDesktopMenuOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
   const pathname = usePathname();
 
   const links = [
@@ -22,8 +42,33 @@ export function LeaderNavigation({ adminName }: { adminName?: string }) {
           <span className="font-serif text-lg text-deep tracking-wide">LEADER</span>
         </div>
         {adminName && (
-          <div className="text-xs font-medium text-grey truncate max-w-[120px]">
-            {adminName}
+          <div className="relative" ref={mobileRef}>
+            <button 
+              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+              className="flex items-center gap-2 focus:outline-none"
+            >
+              <div className="text-xs font-medium text-grey truncate max-w-[120px]">
+                {adminName}
+              </div>
+              {adminImage ? (
+                <Image src={adminImage} alt={adminName} width={32} height={32} className="rounded-full object-cover border border-line" />
+              ) : (
+                <div className="w-8 h-8 rounded-full bg-mist flex items-center justify-center text-deep font-bold text-xs border border-line">
+                  {adminName.charAt(0).toUpperCase()}
+                </div>
+              )}
+            </button>
+            {isMobileMenuOpen && (
+              <div className="absolute right-0 mt-2 w-48 bg-white border border-line rounded-lg shadow-lg py-1 z-50">
+                <button
+                  onClick={() => signOut({ callbackUrl: '/login' })}
+                  className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-mist flex items-center gap-2"
+                >
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+                  Sign out
+                </button>
+              </div>
+            )}
           </div>
         )}
       </div>
@@ -35,9 +80,38 @@ export function LeaderNavigation({ adminName }: { adminName?: string }) {
         </div>
         
         {adminName && (
-          <div className="px-6 py-4 border-b border-line">
-            <div className="text-[10px] uppercase tracking-wider text-grey font-semibold mb-1">Admin</div>
-            <div className="text-deep font-medium text-sm truncate">{adminName}</div>
+          <div className="px-6 py-4 border-b border-line relative" ref={desktopRef}>
+            <button 
+              onClick={() => setIsDesktopMenuOpen(!isDesktopMenuOpen)}
+              className="w-full flex items-center justify-between focus:outline-none group hover:opacity-80 transition-opacity"
+            >
+              <div className="flex items-center gap-3 overflow-hidden">
+                {adminImage ? (
+                  <Image src={adminImage} alt={adminName} width={36} height={36} className="rounded-full object-cover border border-line flex-shrink-0" />
+                ) : (
+                  <div className="w-9 h-9 rounded-full bg-mist flex items-center justify-center text-deep font-bold text-sm border border-line flex-shrink-0">
+                    {adminName.charAt(0).toUpperCase()}
+                  </div>
+                )}
+                <div className="flex-1 text-left overflow-hidden">
+                  <div className="text-[10px] uppercase tracking-wider text-grey font-semibold mb-0.5">Admin</div>
+                  <div className="text-deep font-medium text-sm truncate">{adminName}</div>
+                </div>
+              </div>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={`text-grey transition-transform flex-shrink-0 ${isDesktopMenuOpen ? 'rotate-180' : ''}`}><polyline points="6 9 12 15 18 9"></polyline></svg>
+            </button>
+            
+            {isDesktopMenuOpen && (
+              <div className="absolute left-6 right-6 top-full mt-2 bg-white border border-line rounded-lg shadow-lg py-1 z-50">
+                <button
+                  onClick={() => signOut({ callbackUrl: '/login' })}
+                  className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-mist flex items-center gap-2"
+                >
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+                  Sign out
+                </button>
+              </div>
+            )}
           </div>
         )}
 
@@ -54,10 +128,7 @@ export function LeaderNavigation({ adminName }: { adminName?: string }) {
         </nav>
 
         <div className="p-4 border-t border-line">
-          <button onClick={() => signOut({ callbackUrl: '/login' })} className="flex items-center gap-3 px-3 py-2.5 w-full text-left rounded-lg text-grey hover:bg-mist hover:text-deep transition-colors">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
-            <span className="font-medium text-sm">Sign out</span>
-          </button>
+          {/* Kept empty or add other links if needed, logout moved to profile */}
         </div>
       </div>
       

@@ -5,12 +5,20 @@ import { LeaderAllCustomers } from '@/components/LeaderAllCustomers';
 
 export default async function LeaderCustomersPage() {
   await requirePartnerAuth();
-  
-  // Fetch all required data in parallel
-  const [partners, customers] = await Promise.all([
-    listAllPartners(),
-    listAllCustomers(),
-  ]);
+
+  let partners: any[] = [];
+  let customers: any[] = [];
+
+  try {
+    const results = await Promise.all([
+      listAllPartners(),
+      listAllCustomers(),
+    ]);
+    partners = results[0];
+    customers = results[1];
+  } catch (error) {
+    console.error('Failed to fetch leader customers data:', error);
+  }
 
   // Enrich customers with partner data
   const enrichedCustomers = customers.map(c => {
