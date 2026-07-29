@@ -13,15 +13,17 @@ export default async function DashboardPage() {
     const isAdmin = (session as any).isAdmin;
     const partnerId = (session as any).partnerId;
 
-    if (isAdmin) {
-      customers = await listAllCustomers();
-    } else if (partnerId && partnerId !== 'admin-override') {
-      const { listCustomersByPartner } = await import('@/lib/db/customers');
-      customers = await listCustomersByPartner(partnerId);
-    } else {
-      // Demo fallback
-      const { listCustomersByPartner } = await import('@/lib/db/customers');
-      customers = await listCustomersByPartner('mock-partner-2');
+    try {
+      if (isAdmin) {
+        customers = await listAllCustomers();
+      } else if (partnerId && partnerId !== 'admin-override') {
+        customers = await listCustomersByPartner(partnerId);
+      } else {
+        customers = await listCustomersByPartner('mock-partner-2');
+      }
+    } catch (error) {
+      console.error('Failed to fetch customers, using empty list:', error);
+      customers = [];
     }
   }
 

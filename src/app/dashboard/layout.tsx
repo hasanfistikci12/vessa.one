@@ -12,8 +12,13 @@ export default async function DashboardLayout({ children }: { children: ReactNod
 
   let partner = null;
   const partnerId = (session as any).partnerId;
-  if (partnerId && partnerId !== 'admin-override') {
-    partner = await getPartnerById(partnerId);
+  
+  try {
+    if (partnerId && partnerId !== 'admin-override') {
+      partner = await getPartnerById(partnerId);
+    }
+  } catch (error) {
+    console.error('Failed to fetch partner in dashboard layout:', error);
   }
 
   const isAdmin = isSuperAdmin || (partner ? authorizedEmails.includes(partner.email) : false);

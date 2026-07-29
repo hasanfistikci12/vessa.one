@@ -1,7 +1,7 @@
 import { ReactNode } from 'react';
 import { requirePartnerAuth } from '@/lib/auth';
 import { getPartnerById } from '@/lib/db/partners';
-import { notFound, redirect } from 'next/navigation';
+import { redirect } from 'next/navigation';
 import { LeaderNavigation } from '@/components/LeaderNavigation';
 
 export default async function LeaderLayout({ children }: { children: ReactNode }) {
@@ -18,9 +18,14 @@ export default async function LeaderLayout({ children }: { children: ReactNode }
   // Attempt to get partner if it exists, otherwise just use the email/name from session
   let adminName = session.user?.name || email;
   const partnerId = (session as any).partnerId;
-  if (partnerId && partnerId !== 'admin-override') {
-    const partner = await getPartnerById(partnerId);
-    if (partner) adminName = partner.name;
+  
+  try {
+    if (partnerId && partnerId !== 'admin-override') {
+      const partner = await getPartnerById(partnerId);
+      if (partner) adminName = partner.name;
+    }
+  } catch (error) {
+    console.error('Failed to fetch partner in leader layout:', error);
   }
 
   return (
