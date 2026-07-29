@@ -18,7 +18,7 @@ export default async function LeaderLayout({ children }: { children: ReactNode }
   // Attempt to get partner if it exists, otherwise just use the email/name from session
   let adminName = session.user?.name || email;
   const partnerId = (session as any).partnerId;
-  if (partnerId !== 'admin-override') {
+  if (partnerId && partnerId !== 'admin-override') {
     const partner = await getPartnerById(partnerId);
     if (partner) adminName = partner.name;
   }

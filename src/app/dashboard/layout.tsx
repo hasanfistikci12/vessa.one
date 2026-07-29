@@ -12,7 +12,7 @@ export default async function DashboardLayout({ children }: { children: ReactNod
 
   let partner = null;
   const partnerId = (session as any).partnerId;
-  if (partnerId !== 'admin-override') {
+  if (partnerId && partnerId !== 'admin-override') {
     partner = await getPartnerById(partnerId);
   }
 

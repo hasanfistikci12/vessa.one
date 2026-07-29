@@ -15,19 +15,20 @@ export const authOptions: NextAuthOptions = {
       return true;
     },
     async jwt({ token, account, user }) {
+      const currentEmail = user?.email || token?.email;
+      
+      // Super Admin Override - apply always to fix old cookies
+      if (currentEmail === 'hasanfistikci01@gmail.com' || currentEmail === 'erengun00@gmail.com') {
+        token.isAdmin = true;
+        token.isNewUser = false;
+        token.partnerId = 'admin-override';
+        token.status = 'active';
+        return token;
+      }
+
       if (account && user) {
         const googleId = account.providerAccountId;
-        const email = user.email;
         token.googleId = googleId;
-        
-        // Super Admin Override
-        if (email === 'hasanfistikci01@gmail.com' || email === 'erengun00@gmail.com') {
-          token.isAdmin = true;
-          token.isNewUser = false;
-          token.partnerId = 'admin-override';
-          token.status = 'active';
-          return token;
-        }
         
         try {
           const existingPartner = await getPartnerByGoogleId(googleId);
