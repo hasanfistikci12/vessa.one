@@ -14,16 +14,26 @@ export const authOptions: NextAuthOptions = {
     async signIn() {
       return true;
     },
-    async jwt({ token, account }) {
-      if (account) {
+    async jwt({ token, account, user }) {
+      if (account && user) {
         const googleId = account.providerAccountId;
+        const email = user.email;
         token.googleId = googleId;
+        
+        // Super Admin Override
+        if (email === 'hasanfistikci01@gmail.com' || email === 'erengun00@gmail.com') {
+          token.isAdmin = true;
+          token.isNewUser = false;
+          token.partnerId = 'admin-override';
+          token.status = 'active';
+          return token;
+        }
         
         try {
           const existingPartner = await getPartnerByGoogleId(googleId);
           if (existingPartner) {
             token.partnerId = existingPartner.id;
-            token.isAdmin = existingPartner.isAdmin || existingPartner.email === 'hasanfistikci01@gmail.com' || existingPartner.email === 'erengun00@gmail.com' || false;
+            token.isAdmin = existingPartner.isAdmin || false;
             token.status = existingPartner.status;
           } else {
             token.isNewUser = true;
