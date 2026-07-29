@@ -253,19 +253,25 @@ export async function getCustomerById(id: string): Promise<Customer | null> {
   if (!db) return MOCK_CUSTOMERS[0];
   const doc = await db.collection('customers').doc(id).get();
   if (!doc.exists) return null;
-  return doc.data() as Customer;
+  return JSON.parse(JSON.stringify(doc.data())) as Customer;
 }
 
 export async function listCustomersByPartner(partnerId: string): Promise<Customer[]> {
   if (!db) return MOCK_CUSTOMERS;
   const snapshot = await db.collection('customers').where('partnerId', '==', partnerId).orderBy('updatedAt', 'desc').get();
-  return snapshot.docs.map((doc: any) => doc.data() as Customer);
+  return snapshot.docs.map((doc: any) => {
+    const data = doc.data();
+    return JSON.parse(JSON.stringify(data)) as Customer;
+  });
 }
 
 export async function listAllCustomers(): Promise<Customer[]> {
   if (!db) return MOCK_CUSTOMERS;
   const snapshot = await db.collection('customers').orderBy('updatedAt', 'desc').get();
-  return snapshot.docs.map((doc: any) => doc.data() as Customer);
+  return snapshot.docs.map((doc: any) => {
+    const data = doc.data();
+    return JSON.parse(JSON.stringify(data)) as Customer;
+  });
 }
 
 export async function updateCustomer(id: string, updates: Partial<Customer>): Promise<void> {

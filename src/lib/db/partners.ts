@@ -83,25 +83,25 @@ export async function getPartnerById(id: string): Promise<Partner | null> {
   if (!db) return MOCK_PARTNER;
   const doc = await db.collection('partners').doc(id).get();
   if (!doc.exists) return null;
-  return doc.data() as Partner;
+  return JSON.parse(JSON.stringify(doc.data())) as Partner;
 }
 
 export async function getPartnerByGoogleId(googleId: string): Promise<Partner | null> {
   if (!db) return MOCK_PARTNER;
   const snapshot = await db.collection('partners').where('googleId', '==', googleId).limit(1).get();
   if (snapshot.empty) return null;
-  return snapshot.docs[0].data() as Partner;
+  return JSON.parse(JSON.stringify(snapshot.docs[0].data())) as Partner;
 }
 
 export async function getPartnerByReferralCode(referralCode: string): Promise<Partner | null> {
   if (!db) return { ...MOCK_PARTNER, referralCode };
   const snapshot = await db.collection('partners').where('referralCode', '==', referralCode).limit(1).get();
   if (snapshot.empty) return null;
-  return snapshot.docs[0].data() as Partner;
+  return JSON.parse(JSON.stringify(snapshot.docs[0].data())) as Partner;
 }
 
 export async function listAllPartners(): Promise<Partner[]> {
   if (!db) return MOCK_PARTNERS;
   const snapshot = await db.collection('partners').orderBy('createdAt', 'desc').get();
-  return snapshot.docs.map((doc: any) => doc.data() as Partner);
+  return snapshot.docs.map((doc: any) => JSON.parse(JSON.stringify(doc.data())) as Partner);
 }
