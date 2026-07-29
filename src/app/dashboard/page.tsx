@@ -1,10 +1,8 @@
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/authOptions';
 import DashboardClient from './DashboardClient';
-import { listCustomersByPartner, getPartnerByEmail } from '@/lib/db/customers'; // I need to get partner
-import { getPartnerByGoogleId } from '@/lib/db/partners';
+import { listCustomersByPartner, listAllCustomers } from '@/lib/db/customers';
 import { Customer } from '@/lib/types';
-import { listAllCustomers } from '@/lib/db/customers';
 
 export default async function DashboardPage() {
   const session = await getServerSession(authOptions);
